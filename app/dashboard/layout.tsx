@@ -47,7 +47,7 @@ export default function DashboardLayout({
 
         const adminData = await apiClient.getCurrentAdmin();
         setAdmin(adminData);
-      } catch (error) {
+      } catch {
         router.replace('/login');
       } finally {
         setIsLoading(false);
@@ -61,7 +61,7 @@ export default function DashboardLayout({
     try {
       await apiClient.logout();
       router.replace('/login');
-    } catch (error) {
+    } catch {
       // Even if logout fails, clear local storage and redirect
       router.replace('/login');
     }
