@@ -11,6 +11,11 @@ export default function DashboardPage() {
     queryFn: () => apiClient.getUserStats(),
   });
 
+  const { data: dashboardMetrics, isLoading: isLoadingMetrics } = useQuery({
+    queryKey: ['dashboard-metrics'],
+    queryFn: () => apiClient.getDashboardMetrics(),
+  });
+
   const { data: users, isLoading: isLoadingUsers } = useQuery({
     queryKey: ['users'],
     queryFn: () => apiClient.getUsers(),
@@ -19,7 +24,7 @@ export default function DashboardPage() {
   const stats = [
     {
       title: 'ผู้ป่วยทั้งหมด',
-      value: userStats?.totalUsers || 0,
+      value: dashboardMetrics?.totalPatients || userStats?.totalUsers || 0,
       icon: Users,
       description: 'จำนวนผู้ป่วยที่ลงทะเบียนในระบบ',
       color: 'text-blue-600',
@@ -27,7 +32,7 @@ export default function DashboardPage() {
     },
     {
       title: 'ผู้ป่วยที่ใช้งานอยู่',
-      value: userStats?.activeUsers || 0,
+      value: dashboardMetrics?.activePatients || userStats?.activeUsers || 0,
       icon: TrendingUp,
       description: 'ผู้ป่วยที่ยังคงใช้งานระบบ',
       color: 'text-green-600',
@@ -35,17 +40,17 @@ export default function DashboardPage() {
     },
     {
       title: 'โปรโตคอลที่ใช้งาน',
-      value: 0, // TODO: Add protocol stats
+      value: dashboardMetrics?.activeProtocols || 0,
       icon: FileText,
       description: 'โปรโตคอลที่กำลังดำเนินการ',
       color: 'text-purple-600',
       bgColor: 'bg-purple-100',
     },
     {
-      title: 'ข้อความที่ส่งวันนี้',
-      value: 0, // TODO: Add message stats
+      title: 'อัตราการปฏิบัติตาม',
+      value: dashboardMetrics?.overallAdherenceRate ? `${Math.round(dashboardMetrics.overallAdherenceRate)}%` : '0%',
       icon: Clock,
-      description: 'จำนวนข้อความที่ส่งในวันนี้',
+      description: 'อัตราการปฏิบัติตามโดยรวม',
       color: 'text-orange-600',
       bgColor: 'bg-orange-100',
     },
@@ -74,10 +79,10 @@ export default function DashboardPage() {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">
-                {isLoadingStats ? (
+                {isLoadingStats || isLoadingMetrics ? (
                   <div className="h-8 w-16 bg-gray-200 rounded animate-pulse" />
                 ) : (
-                  stat.value.toLocaleString()
+                  typeof stat.value === 'string' ? stat.value : stat.value.toLocaleString()
                 )}
               </div>
               <p className="text-xs text-gray-500 mt-1">

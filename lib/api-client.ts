@@ -116,6 +116,95 @@ class ApiClient {
   isAuthenticated(): boolean {
     return !!this.getToken();
   }
+
+  // Protocol Management
+  async getProtocols(query?: { status?: string; createdBy?: string }): Promise<any[]> {
+    const params = query || {};
+    const response = await this.client.get<ApiResponse>('/api/protocols', { params });
+    return response.data.data || [];
+  }
+
+  async getProtocol(id: string): Promise<any> {
+    const response = await this.client.get<ApiResponse>(`/api/protocols/${id}`);
+    return response.data.data;
+  }
+
+  async getProtocolWithSteps(id: string): Promise<any> {
+    const response = await this.client.get<ApiResponse>(`/api/protocols/${id}/with-steps`);
+    return response.data.data;
+  }
+
+  async createProtocol(data: { name: string; description?: string }): Promise<any> {
+    const response = await this.client.post<ApiResponse>('/api/protocols', data);
+    return response.data.data;
+  }
+
+  async updateProtocol(id: string, data: { name?: string; description?: string; status?: string }): Promise<any> {
+    const response = await this.client.put<ApiResponse>(`/api/protocols/${id}`, data);
+    return response.data.data;
+  }
+
+  async deleteProtocol(id: string): Promise<void> {
+    await this.client.delete(`/api/protocols/${id}`);
+  }
+
+  async activateProtocol(id: string): Promise<any> {
+    const response = await this.client.post<ApiResponse>(`/api/protocols/${id}/activate`);
+    return response.data.data;
+  }
+
+  async validateProtocol(id: string): Promise<{ isValid: boolean; errors: string[] }> {
+    const response = await this.client.get<ApiResponse>(`/api/protocols/${id}/validate`);
+    return response.data.data;
+  }
+
+  // Protocol Steps
+  async getProtocolSteps(protocolId: string): Promise<any[]> {
+    const response = await this.client.get<ApiResponse>(`/api/protocols/${protocolId}/steps`);
+    return response.data.data || [];
+  }
+
+  async createProtocolStep(protocolId: string, data: any): Promise<any> {
+    const response = await this.client.post<ApiResponse>(`/api/protocols/${protocolId}/steps`, data);
+    return response.data.data;
+  }
+
+  async updateProtocolStep(protocolId: string, stepId: string, data: any): Promise<any> {
+    const response = await this.client.put<ApiResponse>(`/api/protocols/${protocolId}/steps/${stepId}`, data);
+    return response.data.data;
+  }
+
+  async deleteProtocolStep(protocolId: string, stepId: string): Promise<void> {
+    await this.client.delete(`/api/protocols/${protocolId}/steps/${stepId}`);
+  }
+
+  // Research & Analytics
+  async getDashboardMetrics(): Promise<any> {
+    const response = await this.client.get<ApiResponse>('/api/research/metrics');
+    return response.data.data;
+  }
+
+  async getAdherenceMetrics(protocolId: string): Promise<any> {
+    const response = await this.client.get<ApiResponse>(`/api/research/adherence/${protocolId}`);
+    return response.data.data;
+  }
+
+  async getPatientList(): Promise<any[]> {
+    const response = await this.client.get<ApiResponse>('/api/research/patients');
+    return response.data.data || [];
+  }
+
+  async exportResearchData(query: any): Promise<any[]> {
+    const response = await this.client.get<ApiResponse>('/api/research/export', { params: query });
+    return response.data.data || [];
+  }
+
+  async exportResearchDataCSV(query: any): Promise<string> {
+    const response = await this.client.post('/api/research/export', { ...query, format: 'csv' }, {
+      headers: { 'Accept': 'text/csv' }
+    });
+    return response.data;
+  }
 }
 
 export const apiClient = new ApiClient();
