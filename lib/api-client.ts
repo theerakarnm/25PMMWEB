@@ -237,6 +237,89 @@ class ApiClient {
     });
     return response.data;
   }
+
+  // Protocol Assignments
+  async getProtocolAssignments(filter?: {
+    status?: 'assigned' | 'active' | 'completed' | 'paused';
+    userId?: string;
+    protocolId?: string;
+  }): Promise<any[]> {
+    const params = filter || {};
+    const response = await this.client.get<ApiResponse>('/api/protocol-assignments', { params });
+    return response.data.data || [];
+  }
+
+  async getProtocolAssignmentsByProtocol(protocolId: string): Promise<any[]> {
+    const response = await this.client.get<ApiResponse>(`/api/protocol-assignments/protocol/${protocolId}`);
+    return response.data.data || [];
+  }
+
+  async getProtocolAssignmentsByUser(userId: string): Promise<any[]> {
+    const response = await this.client.get<ApiResponse>(`/api/protocol-assignments/user/${userId}`);
+    return response.data.data || [];
+  }
+
+  async createProtocolAssignment(data: { userId: string; protocolId: string }): Promise<any> {
+    const response = await this.client.post<ApiResponse>('/api/protocol-assignments', data);
+    return response.data.data;
+  }
+
+  async startProtocolAssignment(assignmentId: string): Promise<any> {
+    const response = await this.client.post<ApiResponse>(`/api/protocol-assignments/${assignmentId}/start`);
+    return response.data.data;
+  }
+
+  async pauseProtocolAssignment(assignmentId: string): Promise<any> {
+    const response = await this.client.post<ApiResponse>(`/api/protocol-assignments/${assignmentId}/pause`);
+    return response.data.data;
+  }
+
+  async resumeProtocolAssignment(assignmentId: string): Promise<any> {
+    const response = await this.client.post<ApiResponse>(`/api/protocol-assignments/${assignmentId}/resume`);
+    return response.data.data;
+  }
+
+  async completeProtocolAssignment(assignmentId: string): Promise<any> {
+    const response = await this.client.post<ApiResponse>(`/api/protocol-assignments/${assignmentId}/complete`);
+    return response.data.data;
+  }
+
+  async deleteProtocolAssignment(assignmentId: string): Promise<void> {
+    await this.client.delete(`/api/protocol-assignments/${assignmentId}`);
+  }
+
+  async getProtocolAssignmentStats(): Promise<{
+    total: number;
+    assigned: number;
+    active: number;
+    completed: number;
+    paused: number;
+    averageAdherenceRate: number;
+  }> {
+    const response = await this.client.get<ApiResponse>('/api/protocol-assignments/stats/overview');
+    return response.data.data;
+  }
+
+  // Generic HTTP methods for flexibility
+  async get(url: string, params?: any): Promise<any> {
+    const response = await this.client.get(url, { params });
+    return response.data;
+  }
+
+  async post(url: string, data?: any): Promise<any> {
+    const response = await this.client.post(url, data);
+    return response.data;
+  }
+
+  async put(url: string, data?: any): Promise<any> {
+    const response = await this.client.put(url, data);
+    return response.data;
+  }
+
+  async delete(url: string): Promise<any> {
+    const response = await this.client.delete(url);
+    return response.data;
+  }
 }
 
 export const apiClient = new ApiClient();

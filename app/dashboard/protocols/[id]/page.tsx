@@ -7,7 +7,7 @@ import { apiClient } from '@/lib/api-client';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, Edit, Play, Trash2 } from 'lucide-react';
+import { ArrowLeft, Edit, Play, Trash2, Users } from 'lucide-react';
 import Link from 'next/link';
 
 export default function ProtocolDetailPage() {
@@ -122,6 +122,12 @@ export default function ProtocolDetailPage() {
           </div>
         </div>
         <div className="flex items-center gap-2">
+          <Link href={`/dashboard/protocols/${protocolId}/assign`}>
+            <Button variant="outline">
+              <Users className="h-4 w-4 mr-2" />
+              มอบหมาย
+            </Button>
+          </Link>
           <Link href={`/dashboard/protocols/${protocolId}/edit`}>
             <Button variant="outline">
               <Edit className="h-4 w-4 mr-2" />
