@@ -10,7 +10,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Select } from '@/components/ui/select';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Plus, Trash2, ArrowUp, ArrowDown, Save, Eye } from 'lucide-react';
 
@@ -20,7 +20,7 @@ const protocolSchema = z.object({
 });
 
 const stepSchema = z.object({
-  stepOrder: z.number().min(1),
+  stepOrder: z.string().min(1),
   triggerType: z.enum(['immediate', 'delay', 'scheduled']),
   triggerValue: z.string().min(1, 'กรุณาใส่ค่าการเรียกใช้'),
   messageType: z.enum(['text', 'image', 'link', 'flex']),
@@ -50,7 +50,7 @@ export default function NewProtocolPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [steps, setSteps] = useState<StepForm[]>([]);
   const [currentStep, setCurrentStep] = useState<Partial<StepForm>>({
-    stepOrder: 1,
+    stepOrder: '1',
     triggerType: 'immediate',
     triggerValue: '0',
     messageType: 'text',
@@ -69,7 +69,7 @@ export default function NewProtocolPage() {
   const addStep = () => {
     if (currentStep.triggerType && currentStep.messageType && currentStep.triggerValue) {
       const newStep: StepForm = {
-        stepOrder: steps.length + 1,
+        stepOrder: String(steps.length + 1),
         triggerType: currentStep.triggerType,
         triggerValue: currentStep.triggerValue,
         messageType: currentStep.messageType,
@@ -79,7 +79,7 @@ export default function NewProtocolPage() {
       };
       setSteps([...steps, newStep]);
       setCurrentStep({
-        stepOrder: steps.length + 2,
+        stepOrder: String(steps.length + 2),
         triggerType: 'immediate',
         triggerValue: '0',
         messageType: 'text',
@@ -94,7 +94,7 @@ export default function NewProtocolPage() {
     // Reorder steps
     const reorderedSteps = newSteps.map((step, i) => ({
       ...step,
-      stepOrder: i + 1,
+      stepOrder: String(i + 1),
     }));
     setSteps(reorderedSteps);
   };
@@ -108,7 +108,7 @@ export default function NewProtocolPage() {
       // Reorder steps
       const reorderedSteps = newSteps.map((step, i) => ({
         ...step,
-        stepOrder: i + 1,
+        stepOrder: String(i + 1),
       }));
       setSteps(reorderedSteps);
     }
@@ -214,14 +214,19 @@ export default function NewProtocolPage() {
                 </label>
                 <Select
                   value={currentStep.triggerType}
-                  onChange={(e) => setCurrentStep({
+                  onValueChange={(value) => setCurrentStep({
                     ...currentStep,
-                    triggerType: e.target.value as any
+                    triggerType: value as 'immediate' | 'delay' | 'scheduled'
                   })}
                 >
-                  <option value="immediate">ส่งทันที</option>
-                  <option value="delay">หน่วงเวลา (นาที)</option>
-                  <option value="scheduled">กำหนดเวลา (HH:MM)</option>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="immediate">ส่งทันที</SelectItem>
+                    <SelectItem value="delay">หน่วงเวลา (นาที)</SelectItem>
+                    <SelectItem value="scheduled">กำหนดเวลา (HH:MM)</SelectItem>
+                  </SelectContent>
                 </Select>
               </div>
 
@@ -249,15 +254,20 @@ export default function NewProtocolPage() {
               </label>
               <Select
                 value={currentStep.messageType}
-                onChange={(e) => setCurrentStep({
+                onValueChange={(value) => setCurrentStep({
                   ...currentStep,
-                  messageType: e.target.value as any
+                  messageType: value as 'text' | 'image' | 'link' | 'flex'
                 })}
               >
-                <option value="text">ข้อความธรรมดา</option>
-                <option value="image">รูปภาพ</option>
-                <option value="link">ลิงก์</option>
-                <option value="flex">Flex Message</option>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="text">ข้อความธรรมดา</SelectItem>
+                  <SelectItem value="image">รูปภาพ</SelectItem>
+                  <SelectItem value="link">ลิงก์</SelectItem>
+                  <SelectItem value="flex">Flex Message</SelectItem>
+                </SelectContent>
               </Select>
             </div>
 
@@ -378,7 +388,7 @@ export default function NewProtocolPage() {
                   />
                 </div>
                 <p className="text-xs text-gray-500">
-                  ปุ่มตอบกลับมาตรฐาน: "เรียบร้อยแล้ว" และ "ยังไม่ทำ/เลื่อนไปก่อน"
+                 {' ปุ่มตอบกลับมาตรฐาน: "เรียบร้อยแล้ว" และ "ยังไม่ทำ/เลื่อนไปก่อน"'}
                 </p>
               </div>
             )}

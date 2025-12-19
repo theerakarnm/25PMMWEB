@@ -7,7 +7,7 @@ import { apiClient } from '@/lib/api-client';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, Edit, Play, Pause, Trash2, Eye } from 'lucide-react';
+import { ArrowLeft, Edit, Play, Trash2 } from 'lucide-react';
 import Link from 'next/link';
 
 export default function ProtocolDetailPage() {
@@ -227,7 +227,7 @@ export default function ProtocolDetailPage() {
             <div className="space-y-4">
               {protocol.steps
                 .sort((a: any, b: any) => a.stepOrder - b.stepOrder)
-                .map((step: any, index: number) => (
+                .map((step: any) => (
                   <div key={step.id} className="border rounded-lg p-4">
                     <div className="flex items-start justify-between mb-3">
                       <div className="flex items-center gap-2">

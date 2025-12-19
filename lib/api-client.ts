@@ -144,6 +144,38 @@ class ApiClient {
     return response.data.data;
   }
 
+  async updateProtocolWithSteps(id: string, data: { 
+    name?: string; 
+    description?: string; 
+    status?: string;
+    steps?: any[];
+  }): Promise<any> {
+    // First update the protocol basic info
+    const { steps, ...protocolData } = data;
+    if (Object.keys(protocolData).length > 0) {
+      await this.updateProtocol(id, protocolData);
+    }
+
+    // If steps are provided, update them
+    if (steps && steps.length > 0) {
+      // Get current steps to determine which to update/delete/create
+      const currentSteps = await this.getProtocolSteps(id);
+      
+      // Delete all existing steps first (simpler approach)
+      for (const step of currentSteps) {
+        await this.deleteProtocolStep(id, step.id);
+      }
+      
+      // Create new steps
+      for (const step of steps) {
+        await this.createProtocolStep(id, step);
+      }
+    }
+
+    // Return the updated protocol with steps
+    return await this.getProtocolWithSteps(id);
+  }
+
   async deleteProtocol(id: string): Promise<void> {
     await this.client.delete(`/api/protocols/${id}`);
   }

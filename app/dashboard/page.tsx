@@ -118,7 +118,7 @@ export default function DashboardPage() {
             ) : users && users.length > 0 ? (
               <div className="space-y-3">
                 {users.slice(0, 5).map((user) => (
-                  <div key={user._id} className="flex items-center space-x-3">
+                  <div key={user.id} className="flex items-center space-x-3">
                     <div className="h-8 w-8 bg-blue-100 rounded-full flex items-center justify-center">
                       <span className="text-sm font-medium text-blue-600">
                         {user.displayName?.charAt(0) || 'U'}

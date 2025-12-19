@@ -6,7 +6,7 @@ import { useQuery } from '@tanstack/react-query';
 import { apiClient } from '@/lib/api-client';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Select } from '@/components/ui/select';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { 
@@ -95,10 +95,15 @@ export default function ReportsPage() {
         <div className="flex items-center gap-3">
           <Select
             value={exportFormat}
-            onChange={(e) => setExportFormat(e.target.value as any)}
+            onValueChange={(value) => setExportFormat(value as 'csv' | 'json')}
           >
-            <option value="csv">CSV</option>
-            <option value="json">JSON</option>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="csv">CSV</SelectItem>
+              <SelectItem value="json">JSON</SelectItem>
+            </SelectContent>
           </Select>
           <Button onClick={handleExportData} className="flex items-center gap-2">
             <Download className="h-4 w-4" />
@@ -207,14 +212,19 @@ export default function ReportsPage() {
         <CardContent>
           <Select
             value={selectedProtocol}
-            onChange={(e) => setSelectedProtocol(e.target.value)}
+            onValueChange={(value) => setSelectedProtocol(value)}
           >
-            <option value="all">ทุกโปรโตคอล</option>
-            {protocols?.map((protocol) => (
-              <option key={protocol.id} value={protocol.id}>
-                {protocol.name}
-              </option>
-            ))}
+            <SelectTrigger className="w-[280px]">
+              <SelectValue placeholder="เลือกโปรโตคอล" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">ทุกโปรโตคอล</SelectItem>
+              {protocols?.map((protocol) => (
+                <SelectItem key={protocol.id} value={protocol.id}>
+                  {protocol.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
           </Select>
         </CardContent>
       </Card>
