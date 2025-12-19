@@ -39,7 +39,6 @@ interface Assignment {
 
 export default function AssignProtocolPage() {
   const params = useParams();
-  const router = useRouter();
   const queryClient = useQueryClient();
   const protocolId = params.id as string;
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
@@ -125,8 +124,8 @@ export default function AssignProtocolPage() {
   // Complete assignment mutation
   const completeMutation = useMutation({
     mutationFn: async (assignmentId: string) => {
-      const response = await apiClient.post(`/protocol-assignments/${assignmentId}/complete`);
-      return response.data.data;
+      const response = await apiClient.post(`/api/protocol-assignments/${assignmentId}/complete`);
+      return response.data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['protocol-assignments', protocolId] });
