@@ -33,12 +33,12 @@ const stepSchema = z.object({
   }),
   requiresAction: z.boolean(),
   feedbackConfig: z.object({
-    question: z.string().optional(),
+    question: z.string().min(1),
     buttons: z.array(z.object({
-      label: z.string(),
-      value: z.string(),
+      label: z.string().min(1),
+      value: z.string().min(1),
       action: z.enum(['complete', 'postpone', 'skip']),
-    })).optional(),
+    })).min(1).max(5),
   }).optional(),
 });
 
@@ -380,15 +380,18 @@ export default function NewProtocolPage() {
                     onChange={(e) => setCurrentStep({
                       ...currentStep,
                       feedbackConfig: {
-                        ...currentStep.feedbackConfig,
-                        question: e.target.value
+                        question: e.target.value,
+                        buttons: [
+                          { label: 'เรียบร้อยแล้ว', value: 'completed', action: 'complete' },
+                          { label: 'ยังไม่ทำ', value: 'not_done', action: 'postpone' }
+                        ]
                       }
                     })}
                     placeholder="คุณได้ทำตามคำแนะนำแล้วหรือยัง?"
                   />
                 </div>
                 <p className="text-xs text-gray-500">
-                 {' ปุ่มตอบกลับมาตรฐาน: "เรียบร้อยแล้ว" และ "ยังไม่ทำ/เลื่อนไปก่อน"'}
+                 {' ปุ่มตอบกลับมาตรฐาน: "เรียบร้อยแล้ว" และ "ยังไม่ทำ&quot;'}
                 </p>
               </div>
             )}

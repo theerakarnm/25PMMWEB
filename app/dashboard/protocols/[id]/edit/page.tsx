@@ -33,8 +33,12 @@ const protocolStepSchema = z.object({
   }),
   requiresAction: z.boolean(),
   feedbackConfig: z.object({
-    question: z.string().optional(),
-    responseType: z.enum(['yes_no', 'scale', 'text']).optional(),
+    question: z.string().min(1),
+    buttons: z.array(z.object({
+      label: z.string().min(1),
+      value: z.string().min(1),
+      action: z.enum(['complete', 'postpone', 'skip']),
+    })).min(1).max(5),
   }).optional(),
 });
 
@@ -94,7 +98,13 @@ export default function EditProtocolPage() {
           messageType: step.messageType,
           contentPayload: step.contentPayload,
           requiresAction: step.requiresAction,
-          feedbackConfig: step.feedbackConfig || { question: '', responseType: 'yes_no' },
+          feedbackConfig: step.feedbackConfig || { 
+            question: '', 
+            buttons: [
+              { label: 'เรียบร้อยแล้ว', value: 'completed', action: 'complete' },
+              { label: 'ยังไม่ทำ', value: 'not_done', action: 'postpone' }
+            ]
+          },
         })) || [],
       });
     }
@@ -139,7 +149,13 @@ export default function EditProtocolPage() {
       messageType: 'text',
       contentPayload: { text: '' },
       requiresAction: false,
-      feedbackConfig: { question: '', responseType: 'yes_no' },
+      feedbackConfig: { 
+        question: '', 
+        buttons: [
+          { label: 'เรียบร้อยแล้ว', value: 'completed', action: 'complete' },
+          { label: 'ยังไม่ทำ', value: 'not_done', action: 'postpone' }
+        ]
+      },
     });
   };
 
@@ -388,6 +404,9 @@ export default function EditProtocolPage() {
                           {...register(`steps.${index}.feedbackConfig.question`)}
                           placeholder="คุณได้ทำตามคำแนะนำแล้วหรือยัง?"
                         />
+                        <p className="text-xs text-gray-500 mt-1">
+                          {'ปุ่มตอบกลับมาตรฐาน: "เรียบร้อยแล้ว" และ "ยังไม่ทำ&quot;'}
+                        </p>
                       </div>
                     )}
                   </div>
